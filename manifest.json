@@ -1,7 +1,7 @@
 {
   "name": "Mi Barbería",
   "short_name": "Barbería",
-  "start_url": "/barberia-app/",
+  "start_url": "/disegnamosapp/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2C2C2A",
