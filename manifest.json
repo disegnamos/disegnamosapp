@@ -1,0 +1,20 @@
+{
+  "name": "Mi Barbería",
+  "short_name": "Barbería",
+  "start_url": "/barberia-app/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2C2C2A",
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/2C2C2A/F1EFE8?text=✂",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/2C2C2A/F1EFE8?text=✂",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
