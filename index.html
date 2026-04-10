@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2C2C2A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Mi Barbería</title>
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f5f4f0;--bg3:#efefeb;
+  --text:#1a1a18;--text2:#73726c;--text3:#9c9a92;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.2);
+  --green-bg:#EAF3DE;--green:#3B6D11;--green-dark:#27500A;
+  --blue-bg:#E6F1FB;--blue:#185FA5;
+  --amber-bg:#FAEEDA;--amber:#854F0B;
+  --red-bg:#FCEBEB;--red:#A32D2D;--red-border:#F09595;
+  --purple-bg:#EEEDFE;--purple:#3C3489;
+  --gray-bg:#F1EFE8;--gray:#5F5E5A;
+  --radius:8px;--radius-lg:12px;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1c1c1a;--bg2:#252523;--bg3:#2e2e2b;
+  --text:#e8e6de;--text2:#9c9a92;--text3:#73726c;
+  --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+.hidden{display:none!important}
+
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;background:var(--bg)}
+.login-box{width:100%;max-width:340px}
+.login-logo{width:52px;height:52px;border-radius:50%;background:#2C2C2A;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 14px}
+.login-title{font-size:20px;font-weight:600;text-align:center;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--text2);text-align:center;margin-bottom:20px}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
+.pin-row{display:flex;gap:10px;justify-content:center;margin:12px 0}
+.pin-d{width:52px;height:60px;text-align:center;font-size:24px;font-weight:600;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text)}
+.pin-d:focus{outline:none;border-color:#2C2C2A}
+.err{font-size:12px;color:var(--red);min-height:16px;margin-top:4px;text-align:center}
+
+/* GENERAL */
+label{font-size:12px;color:var(--text2);display:block;margin-bottom:3px;margin-top:10px}
+input,select,textarea{width:100%;padding:8px 10px;border:0.5px solid var(--border2);border-radius:var(--radius);font-size:13px;background:var(--bg);color:var(--text);font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gray)}
+textarea{resize:vertical;min-height:60px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:8px 16px;border-radius:var(--radius);border:0.5px solid var(--border2);background:var(--bg);color:var(--text);cursor:pointer;font-size:13px;font-family:inherit;transition:background .12s}
+.btn:hover{background:var(--bg2)}
+.btn-dark{background:#2C2C2A;color:#F1EFE8;border-color:#2C2C2A}
+.btn-dark:hover{background:#444441}
+.btn-green{background:var(--green);color:var(--green-bg);border-color:var(--green)}
+.btn-green:hover{background:var(--green-dark)}
+.btn-blue{background:var(--blue);color:var(--blue-bg);border-color:var(--blue)}
+.btn-red{background:transparent;color:var(--red);border-color:var(--red-border);font-size:12px;padding:3px 8px}
+.btn-amber{background:var(--amber);color:var(--amber-bg);border-color:var(--amber);font-size:12px;padding:4px 10px}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-full{width:100%}
+
+/* LAYOUT APP */
+.app-wrap{max-width:960px;margin:0 auto;padding:.75rem}
+.session-bar{display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-radius:var(--radius);padding:7px 12px;margin-bottom:1rem;font-size:12px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.logo-sm{width:36px;height:36px;border-radius:50%;background:#2C2C2A;display:flex;align-items:center;justify-content:center;font-size:16px;color:#F1EFE8;flex-shrink:0}
+.nav{display:flex;gap:5px;margin-bottom:1.25rem;flex-wrap:wrap}
+.nav button{padding:6px 14px;border-radius:999px;border:0.5px solid var(--border2);background:var(--bg);color:var(--text);cursor:pointer;font-size:12px;transition:all .12s;font-family:inherit}
+.nav button.active{background:#2C2C2A;color:#F1EFE8;border-color:#2C2C2A;font-weight:500}
+.nav button:hover:not(.active){background:var(--bg2)}
+.sec{display:none}.sec.active{display:block}
+
+/* COMPONENTS */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:1rem}
+.metric{background:var(--bg2);border-radius:var(--radius);padding:.75rem}
+.metric .lbl{font-size:10px;color:var(--text2);margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.metric .val{font-size:18px;font-weight:600}
+.metric .sub{font-size:10px;color:var(--text3);margin-top:2px}
+.stitle{font-size:13px;font-weight:600;margin-bottom:8px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.row-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius);margin-bottom:5px}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:999px;font-weight:500}
+.b-pending{background:var(--amber-bg);color:var(--amber)}
+.b-arrived{background:var(--blue-bg);color:var(--blue)}
+.b-done{background:var(--green-bg);color:var(--green)}
+.b-noshow{background:var(--red-bg);color:var(--red)}
+.b-cancelled{background:var(--gray-bg);color:var(--gray)}
+.b-vip{background:var(--purple-bg);color:var(--purple)}
+.b-new{background:var(--blue-bg);color:var(--blue)}
+.b-freq{background:var(--green-bg);color:var(--green)}
+.b-inactive{background:var(--gray-bg);color:var(--gray)}
+.empty{text-align:center;padding:1.5rem;color:var(--text3);font-size:13px}
+.prog{background:var(--bg2);border-radius:999px;height:5px;flex:1;overflow:hidden}
+.prog-fill{height:100%;border-radius:999px;background:var(--green);transition:width .4s}
+.divider{border:none;border-top:0.5px solid var(--border);margin:10px 0}
+.chip{display:inline-flex;align-items:center;font-size:11px;padding:3px 9px;border-radius:999px;cursor:pointer;border:0.5px solid var(--border2);background:var(--bg2);color:var(--text2);margin:2px;transition:all .12s}
+.chip.sel{background:#2C2C2A;color:#F1EFE8;border-color:#2C2C2A}
+.preview-box{background:var(--bg2);border-radius:var(--radius);padding:.75rem;font-size:12px;color:var(--text2);margin-top:6px;line-height:1.6;white-space:pre-wrap;min-height:48px}
+.prod-line{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:0.5px solid var(--border)}
+.prod-line:last-child{border-bottom:none}
+.qty-btn{width:26px;height:26px;border-radius:var(--radius);border:0.5px solid var(--border2);background:var(--bg2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text)}
+.co-summary{background:var(--bg2);border-radius:var(--radius-lg);padding:.875rem;margin-top:10px}
+.modal-bg{min-height:480px;background:rgba(0,0,0,0.45);display:flex;align-items:flex-start;justify-content:center;padding-top:32px;border-radius:var(--radius-lg)}
+.modal{background:var(--bg);border-radius:var(--radius-lg);border:0.5px solid var(--border2);padding:1.25rem;width:100%;max-width:500px}
+.camp-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:.875rem;margin-bottom:8px}
+.barber-card{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem;margin-bottom:8px}
+.tag-cat{font-size:10px;padding:2px 6px;border-radius:999px}
+.tc-s{background:var(--green-bg);color:var(--green)}
+.tc-p{background:var(--blue-bg);color:var(--blue)}
+@media(max-width:600px){.row2,.row3{grid-template-columns:1fr}.metric-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<!-- ========== LOGIN ========== -->
+<div id="screen-login" class="login-wrap">
+  <div class="login-box">
+    <div class="login-logo" id="login-logo" style="overflow:hidden"><span id="login-logo-inner">✂</span></div>
+    <div class="login-title" id="login-title">Mi Barbería</div>
+    <div class="login-sub" id="login-sub">Ingresa tu PIN de 4 dígitos</div>
+
+    <div id="panel-pin" class="card">
+      <div class="pin-row">
+        <input class="pin-d" id="p0" maxlength="1" inputmode="numeric" type="password" oninput="pinInput(0)">
+        <input class="pin-d" id="p1" maxlength="1" inputmode="numeric" type="password" oninput="pinInput(1)">
+        <input class="pin-d" id="p2" maxlength="1" inputmode="numeric" type="password" oninput="pinInput(2)">
+        <input class="pin-d" id="p3" maxlength="1" inputmode="numeric" type="password" oninput="pinInput(3)">
+      </div>
+      <div class="err" id="pin-err"></div>
+      <button class="btn btn-dark btn-full" style="margin-top:8px" onclick="checkPin()">Entrar</button>
+      <div style="text-align:center;margin-top:10px">
+        <span style="font-size:12px;color:var(--text2);cursor:pointer;text-decoration:underline" onclick="showChangePin()">Cambiar PIN</span>
+      </div>
+    </div>
+
+    <div id="panel-change" class="card hidden">
+      <div class="stitle">Configura tu PIN</div>
+      <label>PIN actual (vacío si es primera vez)</label>
+      <input id="old-pin" type="password" maxlength="4" inputmode="numeric" placeholder="— dejar vacío —">
+      <label>Nuevo PIN (4 dígitos)</label>
+      <input id="new-pin" type="password" maxlength="4" inputmode="numeric" placeholder="ej. 7291">
+      <label>Confirmar PIN</label>
+      <input id="confirm-pin" type="password" maxlength="4" inputmode="numeric" placeholder="repite el PIN">
+      <div class="err" id="change-err"></div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-full" onclick="showPinPanel()">Cancelar</button>
+        <button class="btn btn-dark btn-full" onclick="savePin()">Guardar PIN</button>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:8px">Sesión activa por 8 horas</div>
+  </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div id="screen-app" class="hidden">
+<div class="app-wrap">
+
+  <div class="session-bar">
+    <div><span class="dot"></span><strong id="sess-biz-name">Mi Barbería</strong> <span style="color:var(--text2)" id="sess-info"></span></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="color:var(--text3);font-size:11px" id="sess-timer"></span>
+      <button class="btn btn-red" onclick="logout()">Salir</button>
+    </div>
+  </div>
+
+  <div class="top-bar">
+    <div class="logo-sm" id="app-logo" style="overflow:hidden"><span id="app-logo-inner">✂</span></div>
+    <div>
+      <div style="font-size:15px;font-weight:600" id="app-biz-name">Mi Barbería</div>
+      <div style="font-size:11px;color:var(--text2)" id="app-date"></div>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="active" onclick="goTo('dash',this)">Dashboard</button>
+    <button onclick="goTo('agenda',this)">Agenda</button>
+    <button onclick="goTo('cobro',this)">Cobro</button>
+    <button onclick="goTo('clientes',this)">Clientes</button>
+    <button onclick="goTo('campanas',this)">Campañas</button>
+    <button onclick="goTo('barberos',this)">Barberos</button>
+    <button onclick="goTo('inventario',this)">Inventario</button>
+    <button onclick="goTo('config',this)">⚙ Config</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="sec active" id="sec-dash">
+    <div class="metric-grid" id="dash-metrics"></div>
+    <div class="row2">
+      <div class="card">
+        <div class="stitle">Citas de hoy</div>
+        <div id="dash-apts"></div>
+      </div>
+      <div class="card">
+        <div class="stitle">Barberos — hoy</div>
+        <div id="dash-barbers"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="stitle">Últimas ventas</div>
+      <div id="dash-sales"></div>
+    </div>
+  </div>
+
+  <!-- AGENDA -->
+  <div class="sec" id="sec-agenda">
+    <div class="card">
+      <div class="stitle">Nueva cita</div>
+      <div class="row2">
+        <div><label>Cliente</label><input id="a-client" placeholder="Nombre completo"></div>
+        <div><label>Teléfono</label><input id="a-phone" placeholder="55 1234 5678"></div>
+      </div>
+      <div class="row3">
+        <div><label>Fecha</label><input id="a-date" type="date"></div>
+        <div><label>Hora</label><input id="a-time" type="time" value="10:00"></div>
+        <div><label>Barbero</label><select id="a-barber"></select></div>
+      </div>
+      <div class="row2">
+        <div><label>Servicio</label><select id="a-svc"></select></div>
+        <div><label>Notas</label><input id="a-notes" placeholder="preferencias, referencias..."></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:10px">
+        <button class="btn btn-dark" onclick="addApt()">+ Agendar</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+        <div class="stitle" style="margin:0">Citas</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <select id="ag-bf" onchange="renderAgenda()" style="width:auto;font-size:12px;padding:4px 7px"></select>
+          <input type="date" id="ag-df" onchange="renderAgenda()" style="width:auto;font-size:12px;padding:4px 7px">
+        </div>
+      </div>
+      <div id="apt-list"></div>
+    </div>
+  </div>
+
+  <!-- COBRO -->
+  <div class="sec" id="sec-cobro">
+    <div class="row2">
+      <div class="card">
+        <div class="stitle">Registrar cobro</div>
+        <label>Cita (opcional)</label>
+        <select id="co-apt" onchange="fillFromApt()"><option value="">— manual —</option></select>
+        <div class="row2">
+          <div><label>Barbero</label><select id="co-barber"></select></div>
+          <div><label>Pago</label>
+            <select id="co-method"><option>Efectivo</option><option>Tarjeta</option><option>Transferencia</option></select>
+          </div>
+        </div>
+        <div style="margin-top:10px"><div class="stitle" style="font-size:12px">Servicios</div>
+          <div id="svc-lines"></div>
+          <button class="btn btn-sm btn-full" style="margin-top:6px" onclick="addSvcLine()">+ Servicio</button>
+        </div>
+        <div style="margin-top:10px"><div class="stitle" style="font-size:12px">Productos</div>
+          <div id="prod-lines"></div>
+          <button class="btn btn-sm btn-full" style="margin-top:6px" onclick="addProdLine()">+ Producto</button>
+        </div>
+        <div class="co-summary">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+            <span style="color:var(--text2)">Servicios</span><span id="co-svc-t">$0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px">
+            <span style="color:var(--text2)">Productos</span><span id="co-prod-t">$0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600">
+            <span>Total</span><span id="co-total" style="color:var(--green)">$0</span>
+          </div>
+        </div>
+        <button class="btn btn-green btn-full" style="margin-top:10px" onclick="completeSale()">Cobrar y cerrar</button>
+      </div>
+      <div class="card">
+        <div class="stitle">Cobros de hoy</div>
+        <div id="sales-history"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div class="sec" id="sec-clientes">
+    <div class="metric-grid" id="cli-metrics"></div>
+    <div class="row2">
+      <div class="card">
+        <div class="stitle">Nuevo cliente</div>
+        <div class="row2">
+          <div><label>Nombre</label><input id="cl-name" placeholder="Juan Pérez"></div>
+          <div><label>WhatsApp</label><input id="cl-phone" placeholder="521 55 1234 5678"></div>
+        </div>
+        <div class="row2">
+          <div><label>Email</label><input id="cl-email" type="email" placeholder="juan@email.com"></div>
+          <div><label>Cumpleaños</label><input id="cl-bday" type="date"></div>
+        </div>
+        <div class="row2">
+          <div><label>Barbero preferido</label><select id="cl-barber"><option value="">— cualquiera —</option></select></div>
+          <div><label>Etiquetas</label>
+            <div style="margin-top:4px" id="tag-chips">
+              <span class="chip" onclick="toggleTag(this,'VIP')">VIP</span>
+              <span class="chip" onclick="toggleTag(this,'Frecuente')">Frecuente</span>
+              <span class="chip" onclick="toggleTag(this,'Nuevo')">Nuevo</span>
+              <span class="chip" onclick="toggleTag(this,'Inactivo')">Inactivo</span>
+            </div>
+          </div>
+        </div>
+        <label>Notas / preferencias</label>
+        <textarea id="cl-notes" rows="2" placeholder="fade alto, alérgico a..."></textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:10px">
+          <button class="btn btn-dark" onclick="addClient()">+ Agregar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+          <div class="stitle" style="margin:0">Clientes</div>
+          <div style="display:flex;gap:5px;flex-wrap:wrap">
+            <input id="cli-q" placeholder="Buscar..." oninput="renderClients()" style="width:120px;font-size:12px;padding:4px 7px">
+            <select id="cli-tf" onchange="renderClients()" style="width:auto;font-size:12px;padding:4px 7px">
+              <option value="">Todas</option><option>VIP</option><option>Frecuente</option><option>Nuevo</option><option>Inactivo</option>
+            </select>
+            <button class="btn btn-sm" onclick="exportCSV()" style="font-size:11px">CSV</button>
+          </div>
+        </div>
+        <div id="client-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAMPAÑAS -->
+  <div class="sec" id="sec-campanas">
+    <div class="row2">
+      <div class="card">
+        <div class="stitle">Nueva campaña</div>
+        <label>Nombre</label><input id="cp-name" placeholder="Promo junio">
+        <label>Canal</label>
+        <select id="cp-ch"><option value="whatsapp">WhatsApp</option><option value="email">Email</option><option value="ambos">WA + Email</option></select>
+        <label>Segmento</label>
+        <select id="cp-seg" onchange="updateSegCount()">
+          <option value="todos">Todos</option><option value="VIP">VIP</option>
+          <option value="Frecuente">Frecuentes</option><option value="Inactivo">Inactivos +30d</option>
+          <option value="Nuevo">Nuevos</option><option value="cumple">Cumplen años este mes</option>
+        </select>
+        <div style="font-size:11px;color:var(--text2);margin-top:4px" id="seg-count"></div>
+        <label>Mensaje</label>
+        <div style="margin-bottom:5px;margin-top:4px">
+          <span class="chip" onclick="insertVar('{nombre}')">nombre</span>
+          <span class="chip" onclick="insertVar('{dias_sin_visita}')">días sin visita</span>
+          <span class="chip" onclick="insertVar('{promo}')">promo</span>
+        </div>
+        <textarea id="cp-msg" rows="3" placeholder="Hola {nombre}, te esperamos..." oninput="updatePreview()"></textarea>
+        <div style="font-size:11px;color:var(--text2);margin-top:6px">Vista previa:</div>
+        <div class="preview-box" id="cp-preview">—</div>
+        <div style="display:flex;gap:7px;justify-content:flex-end;margin-top:10px">
+          <button class="btn" onclick="saveCampaign()">Guardar</button>
+          <button class="btn btn-green" onclick="launchCampaign()">Lanzar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="stitle">Campañas</div>
+        <div id="camp-list"></div>
+        <div class="divider"></div>
+        <div class="stitle">Automáticos</div>
+        <div id="triggers-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BARBEROS -->
+  <div class="sec" id="sec-barberos">
+    <div class="metric-grid" id="barber-metrics"></div>
+    <div id="barber-cards"></div>
+  </div>
+
+  <!-- INVENTARIO -->
+  <div class="sec" id="sec-inventario">
+    <div class="card">
+      <div class="stitle">Agregar producto</div>
+      <div class="row3">
+        <div><label>Nombre</label><input id="inv-name" placeholder="Cera mate"></div>
+        <div><label>Precio ($)</label><input id="inv-price" type="number" placeholder="0"></div>
+        <div><label>Stock</label><input id="inv-stock" type="number" placeholder="0" min="0"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:10px">
+        <button class="btn btn-dark" onclick="addProduct()">+ Agregar</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="stitle">Catálogo</div>
+      <div id="prod-catalog"></div>
+    </div>
+  </div>
+
+  <!-- CONFIGURACIÓN -->
+  <div class="sec" id="sec-config">
+    <div class="card">
+      <div class="stitle">Identidad del negocio</div>
+      <div class="row2" style="align-items:flex-start">
+        <div>
+          <label>Nombre del negocio</label>
+          <input id="cfg-biz-name" placeholder="Mi Barbería" oninput="previewBizName(this.value)">
+          <div style="display:flex;justify-content:flex-end;margin-top:8px">
+            <button class="btn btn-dark btn-sm" onclick="saveBizName()">Guardar nombre</button>
+          </div>
+        </div>
+        <div>
+          <label>Logo del negocio</label>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+            <div id="cfg-logo-preview" style="width:52px;height:52px;border-radius:50%;background:#2C2C2A;display:flex;align-items:center;justify-content:center;font-size:22px;color:#F1EFE8;overflow:hidden;flex-shrink:0">
+              <span id="cfg-logo-inner">✂</span>
+            </div>
+            <div style="flex:1">
+              <input type="file" id="cfg-logo-file" accept="image/*" onchange="handleLogoUpload(this)" style="font-size:11px;padding:4px 6px">
+              <div style="font-size:11px;color:var(--text2);margin-top:4px">JPG, PNG o SVG. Se recortará en círculo.</div>
+              <button class="btn btn-red btn-sm" style="margin-top:6px" onclick="removeLogo()">Quitar logo</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="card">
+        <div class="stitle">Barberos</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Edita nombres y asigna un PIN de 4 dígitos a cada barbero para que puedan entrar solos a registrar ventas.</div>
+        <div id="cfg-barbers"></div>
+        <div style="display:flex;gap:7px;margin-top:10px">
+          <input id="cfg-new-barber" placeholder="Nombre del nuevo barbero" style="flex:1">
+          <button class="btn btn-dark" onclick="addBarber()">+ Agregar</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="stitle">Servicios</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Edita nombre y precio, o elimina servicios que ya no ofrezcas.</div>
+        <div id="cfg-services"></div>
+        <div style="display:flex;gap:7px;margin-top:10px">
+          <input id="cfg-new-svc-name" placeholder="Nombre del servicio" style="flex:1">
+          <input id="cfg-new-svc-price" type="number" placeholder="Precio" style="width:80px">
+          <button class="btn btn-dark" onclick="addService()">+ Agregar</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="stitle">PIN del dueño</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:10px">Este PIN da acceso completo a toda la app. Los PINs de barberos solo dan acceso a registrar ventas.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="showChangePin();showLogin()">Cambiar PIN del dueño</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CLIENTE -->
+  <div id="modal-overlay" class="hidden" style="position:fixed;inset:0;z-index:100;padding:1rem;overflow-y:auto;background:rgba(0,0,0,0.45);display:flex;align-items:flex-start;justify-content:center;padding-top:40px">
+    <div class="modal">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:15px;font-weight:600" id="modal-title"></div>
+        <button class="btn btn-sm" onclick="closeModal()">✕</button>
+      </div>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+</div><!-- /app-wrap -->
+</div><!-- /screen-app -->
+
+<!-- ========== PANTALLA BARBERO ========== -->
+<div id="screen-barber" class="hidden">
+<div class="app-wrap">
+  <div class="session-bar">
+    <div><span class="dot"></span><strong id="barber-welcome">Barbero</strong></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:var(--text3)" id="barber-timer"></span>
+      <span style="font-size:11px;color:var(--text2)" id="barber-date"></span>
+      <button class="btn btn-red" onclick="logout()">Salir</button>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem">
+    <div class="metric"><div class="lbl">Mis ventas hoy</div><div class="val" id="b-day-total">$0</div><div class="sub" id="b-day-count">0 cobros</div></div>
+    <div class="metric"><div class="lbl">Acceso</div><div class="val" style="font-size:14px">Solo cobros</div><div class="sub">vista de barbero</div></div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <div class="stitle">Registrar cobro</div>
+      <label>Cliente (opcional)</label>
+      <input id="b-client" placeholder="Nombre del cliente">
+      <label>Método de pago</label>
+      <select id="b-method"><option>Efectivo</option><option>Tarjeta</option><option>Transferencia</option></select>
+      <div style="margin-top:10px"><div class="stitle" style="font-size:12px">Servicios</div>
+        <div id="b-svc-lines"></div>
+        <button class="btn btn-sm btn-full" style="margin-top:6px" onclick="bAddSvc()">+ Servicio</button>
+      </div>
+      <div style="margin-top:10px"><div class="stitle" style="font-size:12px">Productos</div>
+        <div id="b-prod-lines"></div>
+        <button class="btn btn-sm btn-full" style="margin-top:6px" onclick="bAddProd()">+ Producto</button>
+      </div>
+      <div class="co-summary">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--text2)">Servicios</span><span id="b-svc-t">$0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px"><span style="color:var(--text2)">Productos</span><span id="b-prod-t">$0</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:600"><span>Total</span><span id="b-total" style="color:var(--green)">$0</span></div>
+      </div>
+      <button class="btn btn-green btn-full" style="margin-top:10px" onclick="bCompleteSale()">Cobrar</button>
+    </div>
+    <div class="card">
+      <div class="stitle">Mis cobros de hoy</div>
+      <div id="b-sales-history"></div>
+    </div>
+  </div>
+
+  <select id="barber-svc-tmpl" class="hidden"></select>
+  <select id="barber-co-barber" class="hidden"></select>
+</div>
+</div>
+
+<script>
+// ===== DATA =====
+const COLORS=[{color:'#CECBF6',tc:'#3C3489'},{color:'#9FE1CB',tc:'#085041'},{color:'#F5C4B3',tc:'#712B13'},{color:'#FAC775',tc:'#633806'},{color:'#B5D4F4',tc:'#0C447C'},{color:'#C0DD97',tc:'#27500A'}];
+let BARBERS=[];
+let SERVICES=[];
+const db = {
+  appointments: [],
+  sales: [],
+  clients: [],
+  products: [
+    {id:1,name:'Cera mate',price:120,stock:15},
+    {id:2,name:'Pomada brillante',price:100,stock:10},
+    {id:3,name:'Aceite de barba',price:150,stock:8},
+    {id:4,name:'Shampoo barba',price:90,stock:12}
+  ],
+  campaigns: [],
+  triggers: [
+    {id:1,name:'Cumpleaños',type:'birthday',channel:'whatsapp',msg:'Feliz cumpleaños {nombre}! Hoy tu corte tiene 20% de descuento ✂',active:true,sent:0},
+    {id:2,name:'Sin visita 30d',type:'inactive_30',channel:'whatsapp',msg:'Hola {nombre}, hace {dias_sin_visita} días que no te vemos. ¿Agendamos?',active:true,sent:0},
+    {id:3,name:'Cliente nuevo',type:'new_client',channel:'whatsapp',msg:'Bienvenido {nombre}! Guarda este número para agendar directo.',active:true,sent:0}
+  ],
+  nextProdId: 5,
+  barbers: [
+    {id:1,name:'Carlos',color:'#CECBF6',tc:'#3C3489',pin:''},
+    {id:2,name:'Miguel',color:'#9FE1CB',tc:'#085041',pin:''},
+    {id:3,name:'Luis',color:'#F5C4B3',tc:'#712B13',pin:''},
+    {id:4,name:'Jesús',color:'#FAC775',tc:'#633806',pin:''}
+  ],
+  services: [
+    {id:1,name:'Corte clásico',price:150},
+    {id:2,name:'Corte + barba',price:250},
+    {id:3,name:'Fade / degradado',price:180},
+    {id:4,name:'Perfilado de barba',price:120},
+    {id:5,name:'Facial',price:200},
+    {id:6,name:'Coloración',price:300},
+    {id:7,name:'Corte infantil',price:100}
+  ],
+  nextBarberId:5, nextSvcId:8
+};
+
+// ===== UTILS =====
+function today(){return new Date().toISOString().split('T')[0]}
+function cur(n){return '$'+Math.round(n).toLocaleString('es-MX')}
+function initials(n){return(n||'').split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase()}
+function daysSince(d){if(!d)return 999;return Math.floor((Date.now()-new Date(d+'T12:00:00'))/(864e5))}
+function bColor(name){const b=BARBERS.find(x=>x.name===name);return b?b.color:'#D3D1C7'}
+function bTC(name){const b=BARBERS.find(x=>x.name===name);return b?b.tc:'#444441'}
+function syncArrays(){BARBERS=[...db.barbers];SERVICES=[...db.services];}
+const AC=['#CECBF6','#9FE1CB','#F5C4B3','#FAC775','#B5D4F4','#C0DD97'];
+const ATC=['#3C3489','#085041','#712B13','#633806','#0C447C','#27500A'];
+function acs(i){return`background:${AC[i%AC.length]};color:${ATC[i%ATC.length]}`}
+
+// ===== AUTH =====
+let currentBarber = null; // null = dueño, object = barbero
+function getPin(){return localStorage.getItem('bp')||'1234'}
+function getSession(){try{return JSON.parse(localStorage.getItem('bs')||'{}')}catch(e){return{}}}
+function saveSession(role,barberId){localStorage.setItem('bs',JSON.stringify({on:true,exp:Date.now()+8*36e5,role:role||'owner',barberId:barberId||null}))}
+function clearSession(){localStorage.removeItem('bs')}
+
+function checkPin(){
+  const pin=[0,1,2,3].map(i=>document.getElementById('p'+i).value).join('');
+  if(pin.length<4){document.getElementById('pin-err').textContent='Ingresa los 4 dígitos';return}
+  // Check owner PIN
+  if(pin===getPin()){saveSession('owner',null);currentBarber=null;document.getElementById('pin-err').textContent='';showApp();return;}
+  // Check barber PINs
+  const barber=db.barbers.find(b=>b.pin&&b.pin===pin);
+  if(barber){saveSession('barber',barber.id);currentBarber=barber;document.getElementById('pin-err').textContent='';showBarberApp();return;}
+  document.getElementById('pin-err').textContent='PIN incorrecto';
+  [0,1,2,3].forEach(i=>document.getElementById('p'+i).value='');
+  document.getElementById('p0').focus();
+}
+
+function showApp(){
+  document.getElementById('screen-login').classList.add('hidden');
+  document.getElementById('screen-barber').classList.add('hidden');
+  document.getElementById('screen-app').classList.remove('hidden');
+  document.getElementById('app-date').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('sess-info').textContent='dueño';
+  applyBranding();
+  startTimer('sess-timer');populateSelects();renderDash();
+}
+
+function showBarberApp(){
+  document.getElementById('screen-login').classList.add('hidden');
+  document.getElementById('screen-app').classList.add('hidden');
+  document.getElementById('screen-barber').classList.remove('hidden');
+  document.getElementById('barber-welcome').textContent='Hola, '+currentBarber.name;
+  document.getElementById('barber-date').textContent=new Date().toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+  startTimer('barber-timer');
+  populateSelects();
+  // Pre-select this barber in cobro
+  setTimeout(()=>{
+    const cb=document.getElementById('barber-co-barber');
+    if(cb)cb.value=currentBarber.name;
+    renderBarberCobro();
+  },50);
+}
+function showLogin(){
+  document.getElementById('screen-app').classList.add('hidden');
+  document.getElementById('screen-barber').classList.add('hidden');
+  document.getElementById('screen-login').classList.remove('hidden');
+  currentBarber=null;
+  showPinPanel();
+  [0,1,2,3].forEach(i=>document.getElementById('p'+i).value='');
+  document.getElementById('pin-err').textContent='';
+}
+function showPinPanel(){
+  document.getElementById('panel-pin').classList.remove('hidden');
+  document.getElementById('panel-change').classList.add('hidden');
+  document.getElementById('login-sub').textContent='Ingresa tu PIN de 4 dígitos';
+}
+function showChangePin(){
+  document.getElementById('panel-pin').classList.add('hidden');
+  document.getElementById('panel-change').classList.remove('hidden');
+  document.getElementById('login-sub').textContent='Configura tu PIN';
+}
+function pinInput(i){
+  const v=document.getElementById('p'+i).value;
+  if(v&&i<3)document.getElementById('p'+(i+1)).focus();
+  if(i===3&&v)checkPin();
+}
+function checkPin(){
+  const pin=[0,1,2,3].map(i=>document.getElementById('p'+i).value).join('');
+  if(pin.length<4){document.getElementById('pin-err').textContent='Ingresa los 4 dígitos';return}
+  if(pin===getPin()){saveSession();document.getElementById('pin-err').textContent='';showApp();}
+  else{document.getElementById('pin-err').textContent='PIN incorrecto';[0,1,2,3].forEach(i=>document.getElementById('p'+i).value='');document.getElementById('p0').focus();}
+}
+function savePin(){
+  const op=document.getElementById('old-pin').value;
+  const np=document.getElementById('new-pin').value;
+  const cp=document.getElementById('confirm-pin').value;
+  const err=document.getElementById('change-err');
+  const first=!localStorage.getItem('bp');
+  if(!first&&op!==getPin()){err.textContent='PIN actual incorrecto';return}
+  if(!/^\d{4}$/.test(np)){err.textContent='El PIN debe ser 4 dígitos';return}
+  if(np!==cp){err.textContent='Los PINs no coinciden';return}
+  localStorage.setItem('bp',np);err.textContent='';saveSession();showApp();
+}
+function logout(){clearSession();currentBarber=null;showLogin()}
+let timerInt=null;
+function startTimer(elId){
+  if(timerInt)clearInterval(timerInt);
+  const tick=()=>{
+    const s=getSession();if(!s.exp)return;
+    const left=s.exp-Date.now();
+    if(left<=0){clearInterval(timerInt);logout();return}
+    const h=Math.floor(left/36e5),m=Math.floor((left%36e5)/6e4);
+    const el=document.getElementById(elId);if(el)el.textContent=h+'h '+m+'m';
+  };
+  timerInt=setInterval(tick,60000);tick();
+}
+
+// ===== POPULATE SELECTS =====
+function populateSelects(){
+  syncArrays();
+  ['a-barber','co-barber','cl-barber','barber-co-barber'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const hasAny=id==='cl-barber';
+    el.innerHTML=(hasAny?'<option value="">— cualquiera —</option>':'')+BARBERS.map(b=>`<option>${b.name}</option>`).join('');
+  });
+  ['a-svc','barber-svc-tmpl'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.innerHTML=SERVICES.map(s=>`<option value="${s.name}|${s.price}">${s.name} — ${cur(s.price)}</option>`).join('');
+  });
+  const agbf=document.getElementById('ag-bf');
+  if(agbf)agbf.innerHTML='<option value="">Todos</option>'+BARBERS.map(b=>`<option>${b.name}</option>`).join('');
+}
+
+// ===== NAV =====
+function goTo(id,btn){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  btn.classList.add('active');
+  const map={dash:renderDash,agenda:renderAgenda,cobro:renderCobro,clientes:()=>{renderCliMetrics();renderClients()},campanas:()=>{renderCampaigns();renderTriggers();updateSegCount()},barberos:renderBarberos,inventario:renderInventario,config:renderConfig};
+  if(map[id])map[id]();
+}
+
+// ===== AGENDA =====
+function addApt(){
+  const client=document.getElementById('a-client').value.trim();
+  const date=document.getElementById('a-date').value;
+  const time=document.getElementById('a-time').value;
+  if(!client||!date||!time){alert('Completa cliente, fecha y hora');return}
+  const svcRaw=document.getElementById('a-svc').value;
+  const[svc,price]=svcRaw.split('|');
+  db.appointments.push({id:Date.now(),client,phone:document.getElementById('a-phone').value.trim(),date,time,barber:document.getElementById('a-barber').value,service:svc,price:Number(price),notes:document.getElementById('a-notes').value.trim(),status:'pending',arrived:false});
+  db.appointments.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+  ['a-client','a-phone','a-notes'].forEach(id=>document.getElementById(id).value='');
+  saveDB();renderAgenda();
+}
+function setAptStatus(id,status){
+  const a=db.appointments.find(x=>x.id===id);
+  if(a){a.status=status;if(status==='arrived')a.arrived=true;}
+  saveDB();renderAgenda();renderDash();
+}
+function deleteApt(id){db.appointments=db.appointments.filter(x=>x.id!==id);saveDB();renderAgenda();renderDash()}
+
+function renderAgenda(){
+  const bf=document.getElementById('ag-bf')?.value||'';
+  const df=document.getElementById('ag-df')?.value||'';
+  let list=[...db.appointments];
+  if(bf)list=list.filter(a=>a.barber===bf);
+  if(df)list=list.filter(a=>a.date===df);
+  const SL={pending:'Pendiente',arrived:'Llegó',done:'Completado',noshow:'No llegó',cancelled:'Cancelado'};
+  const SC={pending:'b-pending',arrived:'b-arrived',done:'b-done',noshow:'b-noshow',cancelled:'b-cancelled'};
+  document.getElementById('apt-list').innerHTML=list.length?list.map(a=>`
+    <div class="row-item">
+      <div class="avatar" style="background:${bColor(a.barber)};color:${bTC(a.barber)}">${initials(a.barber)}</div>
+      <div style="min-width:40px;font-size:11px;color:var(--text2)">${a.time}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.client}</div>
+        <div style="font-size:11px;color:var(--text2)">${a.service} · ${a.barber}</div>
+      </div>
+      <span style="font-size:12px;font-weight:600;color:var(--green);flex-shrink:0">${cur(a.price)}</span>
+      <span class="badge ${SC[a.status]}">${SL[a.status]}</span>
+      <div style="display:flex;gap:3px;flex-shrink:0">
+        ${a.status==='pending'?`<button class="btn btn-amber" onclick="setAptStatus(${a.id},'arrived')">Llegó</button>`:''}
+        ${a.status==='arrived'?`<button class="btn btn-green btn-sm" onclick="setAptStatus(${a.id},'done')">✓</button>`:''}
+        ${['pending','arrived'].includes(a.status)?`<button class="btn btn-red" onclick="setAptStatus(${a.id},'noshow')">No llegó</button>`:''}
+        <button class="btn btn-red" onclick="deleteApt(${a.id})">✕</button>
+      </div>
+    </div>`).join(''):'<div class="empty">Sin citas</div>';
+}
+
+// ===== COBRO =====
+let coSvc=[],coProd=[];
+function renderCobro(){
+  const coApt=document.getElementById('co-apt');
+  const pending=db.appointments.filter(a=>['arrived','pending'].includes(a.status)&&a.date===today());
+  coApt.innerHTML='<option value="">— manual —</option>'+pending.map(a=>`<option value="${a.id}">${a.client} · ${a.time}</option>`).join('');
+  if(!coSvc.length)coSvc=[{svc:SERVICES[0].name,price:SERVICES[0].price}];
+  renderSvcLines();renderProdLines();updateCoTotals();renderSalesHistory();
+}
+function fillFromApt(){
+  const id=Number(document.getElementById('co-apt').value);if(!id)return;
+  const a=db.appointments.find(x=>x.id===id);if(!a)return;
+  document.getElementById('co-barber').value=a.barber;
+  coSvc=[{svc:a.service,price:a.price}];renderSvcLines();updateCoTotals();
+}
+function renderSvcLines(){
+  document.getElementById('svc-lines').innerHTML=coSvc.map((l,i)=>`
+    <div class="prod-line">
+      <select onchange="coSvcCh(${i},this.value)" style="flex:1;font-size:12px;padding:4px 6px">
+        ${SERVICES.map(s=>`<option value="${s.name}|${s.price}" ${l.svc===s.name?'selected':''}>${s.name} — ${cur(s.price)}</option>`).join('')}
+      </select>
+      <span style="font-size:12px;font-weight:600;min-width:48px;text-align:right">${cur(l.price)}</span>
+      <div class="qty-btn" onclick="rmSvc(${i})">−</div>
+    </div>`).join('');
+}
+function coSvcCh(i,v){const[svc,price]=v.split('|');coSvc[i]={svc,price:Number(price)};renderSvcLines();updateCoTotals()}
+function addSvcLine(){coSvc.push({svc:SERVICES[0].name,price:SERVICES[0].price});renderSvcLines();updateCoTotals()}
+function rmSvc(i){if(coSvc.length>1)coSvc.splice(i,1);renderSvcLines();updateCoTotals()}
+function renderProdLines(){
+  document.getElementById('prod-lines').innerHTML=coProd.length?coProd.map((l,i)=>`
+    <div class="prod-line">
+      <select onchange="coProdCh(${i},this.value)" style="flex:1;font-size:12px;padding:4px 6px">
+        ${db.products.map(p=>`<option value="${p.id}" ${l.pid===p.id?'selected':''}>${p.name} — ${cur(p.price)}</option>`).join('')}
+      </select>
+      <div class="qty-btn" onclick="coProdQ(${i},-1)">−</div>
+      <span style="font-size:12px;min-width:18px;text-align:center">${l.qty}</span>
+      <div class="qty-btn" onclick="coProdQ(${i},1)">+</div>
+      <span style="font-size:12px;font-weight:600;min-width:48px;text-align:right">${cur(l.price*l.qty)}</span>
+      <button class="btn btn-red" onclick="rmProd(${i})">✕</button>
+    </div>`).join(''):'<div style="font-size:12px;color:var(--text2);padding:6px 0">Sin productos</div>';
+}
+function coProdCh(i,pid){const p=db.products.find(x=>x.id===Number(pid));if(p){coProd[i]={pid:p.id,name:p.name,price:p.price,qty:coProd[i].qty};renderProdLines();updateCoTotals()}}
+function coProdQ(i,d){coProd[i].qty=Math.max(1,coProd[i].qty+d);renderProdLines();updateCoTotals()}
+function addProdLine(){if(!db.products.length){alert('Agrega productos en Inventario');return}const p=db.products[0];coProd.push({pid:p.id,name:p.name,price:p.price,qty:1});renderProdLines();updateCoTotals()}
+function rmProd(i){coProd.splice(i,1);renderProdLines();updateCoTotals()}
+function updateCoTotals(){
+  const st=coSvc.reduce((s,l)=>s+l.price,0);
+  const pt=coProd.reduce((s,l)=>s+l.price*l.qty,0);
+  document.getElementById('co-svc-t').textContent=cur(st);
+  document.getElementById('co-prod-t').textContent=cur(pt);
+  document.getElementById('co-total').textContent=cur(st+pt);
+}
+function completeSale(){
+  const barber=document.getElementById('co-barber').value;
+  const method=document.getElementById('co-method').value;
+  const aptId=Number(document.getElementById('co-apt').value)||null;
+  const st=coSvc.reduce((s,l)=>s+l.price,0);
+  const pt=coProd.reduce((s,l)=>s+l.price*l.qty,0);
+  if(!st&&!pt){alert('Agrega al menos un servicio o producto');return}
+  const sale={id:Date.now(),date:today(),time:new Date().toTimeString().slice(0,5),barber,method,services:[...coSvc],products:[...coProd],svcTotal:st,prodTotal:pt,total:st+pt,client:''};
+  if(aptId){const a=db.appointments.find(x=>x.id===aptId);if(a){a.status='done';sale.client=a.client;}}
+  coProd.forEach(l=>{const p=db.products.find(x=>x.id===l.pid);if(p)p.stock=Math.max(0,p.stock-l.qty);});
+  db.sales.push(sale);
+  coSvc=[{svc:SERVICES[0].name,price:SERVICES[0].price}];coProd=[];
+  document.getElementById('co-apt').value='';
+  renderSvcLines();renderProdLines();updateCoTotals();renderSalesHistory();saveDB();renderDash();
+}
+function renderSalesHistory(){
+  const el=document.getElementById('sales-history');if(!el)return;
+  const ts=db.sales.filter(s=>s.date===today()).reverse();
+  el.innerHTML=ts.length?ts.map(s=>`
+    <div class="row-item" style="flex-direction:column;align-items:stretch;gap:3px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;align-items:center;gap:7px">
+          <div class="avatar" style="background:${bColor(s.barber)};color:${bTC(s.barber)}">${initials(s.barber)}</div>
+          <div><div style="font-size:12px;font-weight:600">${s.client||s.barber}</div><div style="font-size:11px;color:var(--text2)">${s.time} · ${s.method}</div></div>
+        </div>
+        <span style="font-size:14px;font-weight:600;color:var(--green)">${cur(s.total)}</span>
+      </div>
+      <div style="padding-left:39px;font-size:11px;color:var(--text2)">
+        ${s.services.map(sv=>`<span class="tag-cat tc-s" style="margin-right:3px">${sv.svc}</span>`).join('')}
+        ${s.products.map(p=>`<span class="tag-cat tc-p" style="margin-right:3px">${p.qty}× ${p.name}</span>`).join('')}
+      </div>
+    </div>`).join(''):'<div class="empty">Sin cobros hoy</div>';
+}
+
+// ===== CLIENTES =====
+let selTags=[];
+function toggleTag(el,tag){
+  el.classList.toggle('sel');
+  if(el.classList.contains('sel')){if(!selTags.includes(tag))selTags.push(tag);}
+  else selTags=selTags.filter(t=>t!==tag);
+}
+function addClient(){
+  const name=document.getElementById('cl-name').value.trim();
+  const phone=document.getElementById('cl-phone').value.trim();
+  if(!name||!phone){alert('Nombre y teléfono son obligatorios');return}
+  const tags=selTags.length?[...selTags]:['Nuevo'];
+  const c={id:Date.now(),name,phone,email:document.getElementById('cl-email').value.trim(),bday:document.getElementById('cl-bday').value,barber:document.getElementById('cl-barber').value,notes:document.getElementById('cl-notes').value.trim(),tags,visits:0,lastVisit:null,totalSpent:0,registered:today()};
+  db.clients.push(c);
+  fireAuto('new_client',c);
+  ['cl-name','cl-phone','cl-email','cl-bday','cl-notes'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('#tag-chips .chip').forEach(c=>c.classList.remove('sel'));
+  selTags=[];saveDB();renderCliMetrics();renderClients();
+}
+function renderCliMetrics(){
+  const t=db.clients.length,vip=db.clients.filter(c=>c.tags.includes('VIP')).length;
+  const inact=db.clients.filter(c=>daysSince(c.lastVisit)>30).length;
+  const bm=db.clients.filter(c=>{if(!c.bday)return false;return new Date(c.bday+'T12:00:00').getMonth()===new Date().getMonth();}).length;
+  document.getElementById('cli-metrics').innerHTML=`
+    <div class="metric"><div class="lbl">Total</div><div class="val">${t}</div></div>
+    <div class="metric"><div class="lbl">VIP</div><div class="val">${vip}</div></div>
+    <div class="metric"><div class="lbl">Inactivos +30d</div><div class="val">${inact}</div></div>
+    <div class="metric"><div class="lbl">Cumplen años</div><div class="val">${bm}</div></div>`;
+}
+function tagBadge(t){const m={VIP:'b-vip',Frecuente:'b-freq',Nuevo:'b-new',Inactivo:'b-inactive'};return`<span class="badge ${m[t]||'b-inactive'}">${t}</span>`}
+function renderClients(){
+  const q=(document.getElementById('cli-q')?.value||'').toLowerCase();
+  const tf=document.getElementById('cli-tf')?.value||'';
+  let list=db.clients.filter(c=>{
+    const mq=!q||c.name.toLowerCase().includes(q)||c.phone.includes(q)||(c.email||'').toLowerCase().includes(q);
+    const mt=!tf||c.tags.includes(tf);return mq&&mt;
+  });
+  document.getElementById('client-list').innerHTML=list.length?list.map((c,i)=>`
+    <div class="row-item" style="cursor:pointer" onclick="openClient(${c.id})">
+      <div class="avatar" style="${acs(i)}">${initials(c.name)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</div>
+        <div style="font-size:11px;color:var(--text2)">${c.phone}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+        ${c.tags.map(t=>tagBadge(t)).join('')}
+        <div style="font-size:10px;color:var(--text3)">${c.lastVisit?daysSince(c.lastVisit)+'d sin visita':'sin visitas'}</div>
+      </div>
+    </div>`).join(''):'<div class="empty">Sin clientes</div>';
+}
+function openClient(id){
+  const c=db.clients.find(x=>x.id===id);if(!c)return;
+  document.getElementById('modal-title').textContent=c.name;
+  document.getElementById('modal-body').innerHTML=`
+    <div class="metric-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:10px">
+      <div class="metric"><div class="lbl">Visitas</div><div class="val">${c.visits}</div></div>
+      <div class="metric"><div class="lbl">Gasto total</div><div class="val" style="font-size:14px">${cur(c.totalSpent)}</div></div>
+      <div class="metric"><div class="lbl">Días inactivo</div><div class="val" style="color:${daysSince(c.lastVisit)>30?'var(--red)':'var(--green)'}">${c.lastVisit?daysSince(c.lastVisit):'—'}</div></div>
+    </div>
+    <table style="width:100%;font-size:12px;border-collapse:collapse">
+      <tr style="border-bottom:0.5px solid var(--border)"><td style="padding:5px 0;color:var(--text2);width:110px">Teléfono</td><td style="padding:5px 0">${c.phone}</td></tr>
+      <tr style="border-bottom:0.5px solid var(--border)"><td style="padding:5px 0;color:var(--text2)">Email</td><td style="padding:5px 0">${c.email||'—'}</td></tr>
+      <tr style="border-bottom:0.5px solid var(--border)"><td style="padding:5px 0;color:var(--text2)">Cumpleaños</td><td style="padding:5px 0">${c.bday||'—'}</td></tr>
+      <tr style="border-bottom:0.5px solid var(--border)"><td style="padding:5px 0;color:var(--text2)">Barbero</td><td style="padding:5px 0">${c.barber||'—'}</td></tr>
+      <tr style="border-bottom:0.5px solid var(--border)"><td style="padding:5px 0;color:var(--text2)">Etiquetas</td><td style="padding:5px 0">${c.tags.map(t=>tagBadge(t)).join(' ')}</td></tr>
+      <tr><td style="padding:5px 0;color:var(--text2)">Notas</td><td style="padding:5px 0">${c.notes||'—'}</td></tr>
+    </table>
+    <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">
+      <a href="https://wa.me/${c.phone.replace(/\D/g,'')}" target="_blank" style="text-decoration:none"><button class="btn btn-green btn-sm">WhatsApp</button></a>
+      ${c.email?`<a href="mailto:${c.email}" style="text-decoration:none"><button class="btn btn-blue btn-sm">Email</button></a>`:''}
+      <button class="btn btn-sm" onclick="markVisit(${c.id})">+ Visita</button>
+      <button class="btn btn-red" onclick="deleteClient(${c.id})">Eliminar</button>
+    </div>`;
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+function markVisit(id){
+  const c=db.clients.find(x=>x.id===id);if(!c)return;
+  c.visits++;c.lastVisit=today();
+  if(c.visits>=5&&!c.tags.includes('Frecuente'))c.tags.push('Frecuente');
+  c.tags=c.tags.filter(t=>t!=='Inactivo');
+  saveDB();closeModal();renderClients();renderCliMetrics();
+}
+function deleteClient(id){if(!confirm('¿Eliminar cliente?'))return;db.clients=db.clients.filter(x=>x.id!==id);saveDB();closeModal();renderClients();renderCliMetrics()}
+function closeModal(){document.getElementById('modal-overlay').classList.add('hidden')}
+function exportCSV(){
+  const rows=[['ID','Nombre','Teléfono','Email','Cumpleaños','Barbero','Etiquetas','Visitas','Última_visita','Gasto_total','Notas','Registro']];
+  db.clients.forEach(c=>rows.push([c.id,c.name,c.phone,c.email||'',c.bday||'',c.barber||'',c.tags.join(';'),c.visits,c.lastVisit||'',c.totalSpent,c.notes||'',c.registered]));
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);a.download='clientes_barberia.csv';a.click();
+}
+
+// ===== CAMPAÑAS =====
+function getSegment(seg){
+  if(seg==='todos')return db.clients;
+  if(seg==='cumple')return db.clients.filter(c=>{if(!c.bday)return false;return new Date(c.bday+'T12:00:00').getMonth()===new Date().getMonth();});
+  if(seg==='Inactivo')return db.clients.filter(c=>daysSince(c.lastVisit)>30);
+  if(seg==='Nuevo')return db.clients.filter(c=>daysSince(c.registered)<30);
+  return db.clients.filter(c=>c.tags.includes(seg));
+}
+function updateSegCount(){
+  const n=getSegment(document.getElementById('cp-seg').value).length;
+  document.getElementById('seg-count').textContent=`${n} cliente${n!==1?'s':''} recibirán este mensaje`;
+}
+function insertVar(v){const ta=document.getElementById('cp-msg');const s=ta.selectionStart;ta.value=ta.value.slice(0,s)+v+ta.value.slice(ta.selectionEnd);ta.selectionStart=ta.selectionEnd=s+v.length;ta.focus();updatePreview()}
+function personalizeMsg(msg,c){return msg.replace(/{nombre}/g,c.name.split(' ')[0]).replace(/{dias_sin_visita}/g,c.lastVisit?daysSince(c.lastVisit):'varios').replace(/{promo}/g,'20% de descuento')}
+function updatePreview(){const msg=document.getElementById('cp-msg').value;const s=db.clients[0]||{name:'Juan',lastVisit:null,registered:today()};document.getElementById('cp-preview').textContent=msg?personalizeMsg(msg,s):'—'}
+function saveCampaign(){
+  const name=document.getElementById('cp-name').value.trim();const msg=document.getElementById('cp-msg').value.trim();
+  if(!name||!msg){alert('Escribe nombre y mensaje');return}
+  db.campaigns.push({id:Date.now(),name,msg,channel:document.getElementById('cp-ch').value,segment:document.getElementById('cp-seg').value,status:'draft',created:today(),sent:0});
+  saveDB();renderCampaigns();
+}
+function launchCampaign(){
+  const name=document.getElementById('cp-name').value.trim();const msg=document.getElementById('cp-msg').value.trim();
+  const seg=document.getElementById('cp-seg').value;const channel=document.getElementById('cp-ch').value;
+  if(!name||!msg){alert('Escribe nombre y mensaje');return}
+  const targets=getSegment(seg);if(!targets.length){alert('Sin clientes en este segmento');return}
+  db.campaigns.push({id:Date.now(),name,msg,channel,segment:seg,status:'sent',created:today(),sent:targets.length});
+  document.getElementById('cp-name').value='';document.getElementById('cp-msg').value='';document.getElementById('cp-preview').textContent='—';
+  saveDB();renderCampaigns();
+  alert(`Campaña enviada a ${targets.length} cliente${targets.length!==1?'s':''}.`);
+}
+function renderCampaigns(){
+  const el=document.getElementById('camp-list');if(!el)return;
+  const ch={whatsapp:'WA',email:'EM',ambos:'WA+EM'};
+  const segL={todos:'Todos',VIP:'VIP',Frecuente:'Frecuentes',Inactivo:'Inactivos',Nuevo:'Nuevos',cumple:'Cumpleaños'};
+  el.innerHTML=db.campaigns.length?[...db.campaigns].reverse().map(c=>`
+    <div class="camp-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:3px">${c.name}</div>
+          <span class="badge ${c.status==='sent'?'b-done':'b-inactive'}">${c.status==='sent'?'Enviada':'Borrador'}</span>
+          <span class="badge b-new" style="margin-left:3px">${ch[c.channel]}</span>
+          <span class="badge b-pending" style="margin-left:3px">${segL[c.segment]||c.segment}</span>
+        </div>
+        <div style="text-align:right"><div style="font-size:15px;font-weight:600">${c.sent}</div><div style="font-size:10px;color:var(--text2)">enviados</div></div>
+      </div>
+    </div>`).join(''):'<div class="empty">Sin campañas</div>';
+  updateSegCount();
+}
+function fireAuto(type,client){
+  const t=db.triggers.find(x=>x.type===type&&x.active);if(!t)return;t.sent++;saveDB();
+}
+function renderTriggers(){
+  const tl={birthday:'Cumpleaños',inactive_30:'Inactivo 30d',new_client:'Cliente nuevo'};
+  document.getElementById('triggers-list').innerHTML=db.triggers.map(t=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)">
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600">${t.name}</div>
+        <div style="font-size:11px;color:var(--text2)">${tl[t.type]||t.type} · ${t.channel}</div>
+      </div>
+      <span style="font-size:12px;font-weight:600">${t.sent}</span>
+      <span class="badge ${t.active?'b-done':'b-inactive'}">${t.active?'Activo':'Pausado'}</span>
+      <button class="btn btn-sm" onclick="toggleTrig(${t.id})">${t.active?'Pausar':'Activar'}</button>
+    </div>`).join('');
+}
+function toggleTrig(id){const t=db.triggers.find(x=>x.id===id);if(t)t.active=!t.active;saveDB();renderTriggers()}
+
+// ===== BARBEROS =====
+function renderBarberos(){
+  const bStats=BARBERS.map(b=>{
+    const apts=db.appointments.filter(a=>a.barber===b.name);
+    const sales=db.sales.filter(s=>s.barber===b.name);
+    const done=apts.filter(a=>a.status==='done').length;
+    const noshow=apts.filter(a=>a.status==='noshow').length;
+    const rev=sales.reduce((s,x)=>s+x.total,0);
+    const prodRev=sales.reduce((s,x)=>s+x.prodTotal,0);
+    const today_apts=apts.filter(a=>a.date===today());
+    return{...b,done,noshow,rev,prodRev,todayApts:today_apts.length,todayPend:today_apts.filter(a=>['pending','arrived'].includes(a.status)).length};
+  });
+  const maxRev=Math.max(...bStats.map(b=>b.rev),1);
+  document.getElementById('barber-metrics').innerHTML=bStats.map(b=>`
+    <div class="metric"><div class="lbl">${b.name}</div><div class="val">${b.done}</div><div class="sub">${cur(b.rev)} total</div></div>`).join('');
+  document.getElementById('barber-cards').innerHTML=bStats.map(b=>`
+    <div class="barber-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div class="avatar" style="width:40px;height:40px;font-size:14px;background:${b.color};color:${b.tc}">${initials(b.name)}</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600">${b.name}</div>
+          <div style="font-size:11px;color:var(--text2)">Hoy: ${b.todayApts} citas · ${b.todayPend} pendientes</div>
+        </div>
+        <div style="text-align:right"><div style="font-size:15px;font-weight:600;color:var(--green)">${cur(b.rev)}</div><div style="font-size:10px;color:var(--text2)">acumulado</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px">
+        <div class="metric" style="padding:.5rem"><div class="lbl">Cortes</div><div class="val" style="font-size:14px">${b.done}</div></div>
+        <div class="metric" style="padding:.5rem"><div class="lbl">No shows</div><div class="val" style="font-size:14px">${b.noshow}</div></div>
+        <div class="metric" style="padding:.5rem"><div class="lbl">Productos</div><div class="val" style="font-size:14px">${cur(b.prodRev)}</div></div>
+        <div class="metric" style="padding:.5rem"><div class="lbl">Show rate</div><div class="val" style="font-size:14px">${b.done+b.noshow>0?Math.round(b.done/(b.done+b.noshow)*100):100}%</div></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="prog"><div class="prog-fill" style="width:${Math.round(b.rev/maxRev*100)}%"></div></div>
+        <span style="font-size:11px;color:var(--text2);white-space:nowrap">${cur(b.rev)}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ===== INVENTARIO =====
+function addProduct(){
+  const name=document.getElementById('inv-name').value.trim();
+  const price=Number(document.getElementById('inv-price').value);
+  const stock=Number(document.getElementById('inv-stock').value)||0;
+  if(!name||!price){alert('Escribe nombre y precio');return}
+  db.products.push({id:db.nextProdId++,name,price,stock});
+  ['inv-name','inv-price','inv-stock'].forEach(id=>document.getElementById(id).value='');
+  saveDB();renderInventario();
+}
+function updateStock(id,d){const p=db.products.find(x=>x.id===id);if(p)p.stock=Math.max(0,p.stock+d);saveDB();renderInventario()}
+function renderInventario(){
+  document.getElementById('prod-catalog').innerHTML=db.products.map(p=>`
+    <div class="prod-line">
+      <div style="flex:1;font-size:12px;font-weight:600">${p.name}</div>
+      <span style="font-size:12px;color:var(--green);min-width:50px;text-align:right">${cur(p.price)}</span>
+      <div style="display:flex;align-items:center;gap:5px;margin-left:10px">
+        <div class="qty-btn" onclick="updateStock(${p.id},-1)">−</div>
+        <span style="font-size:13px;font-weight:600;min-width:24px;text-align:center;color:${p.stock<=3?'var(--red)':'var(--text)'}">${p.stock}</span>
+        <div class="qty-btn" onclick="updateStock(${p.id},1)">+</div>
+      </div>
+      ${p.stock<=3?'<span style="font-size:10px;color:var(--red);margin-left:4px">⚠ bajo</span>':''}
+    </div>`).join('');
+}
+
+// ===== DASHBOARD =====
+function renderDash(){
+  const t=today();
+  const ta=db.appointments.filter(a=>a.date===t);
+  const ts=db.sales.filter(s=>s.date===t);
+  const rev=ts.reduce((s,x)=>s+x.total,0);
+  const prodQ=ts.reduce((s,x)=>s+x.products.reduce((a,p)=>a+p.qty,0),0);
+  document.getElementById('dash-metrics').innerHTML=`
+    <div class="metric"><div class="lbl">Citas hoy</div><div class="val">${ta.length}</div><div class="sub">${ta.filter(a=>a.status==='done').length} completadas</div></div>
+    <div class="metric"><div class="lbl">Ingresos</div><div class="val">${cur(rev)}</div><div class="sub">servicios + productos</div></div>
+    <div class="metric"><div class="lbl">Productos</div><div class="val">${prodQ}</div><div class="sub">unidades vendidas</div></div>
+    <div class="metric"><div class="lbl">Clientes</div><div class="val">${db.clients.length}</div><div class="sub">en la base</div></div>`;
+  const SL={pending:'Pendiente',arrived:'Llegó',done:'Hecho',noshow:'No llegó',cancelled:'Cancelado'};
+  const SC={pending:'b-pending',arrived:'b-arrived',done:'b-done',noshow:'b-noshow',cancelled:'b-cancelled'};
+  document.getElementById('dash-apts').innerHTML=ta.slice(0,6).map(a=>`
+    <div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:0.5px solid var(--border)">
+      <span style="font-size:11px;color:var(--text2);min-width:36px">${a.time}</span>
+      <div style="flex:1"><div style="font-size:12px;font-weight:600">${a.client}</div><div style="font-size:11px;color:var(--text2)">${a.barber}</div></div>
+      <span class="badge ${SC[a.status]}">${SL[a.status]}</span>
+    </div>`).join('')||'<div class="empty">Sin citas hoy</div>';
+  const bStats=BARBERS.map(b=>{
+    const ba=db.appointments.filter(a=>a.barber===b.name&&a.date===t);
+    const bs=db.sales.filter(s=>s.barber===b.name&&s.date===t);
+    return{...b,cuts:ba.filter(a=>a.status==='done').length,pend:ba.filter(a=>['pending','arrived'].includes(a.status)).length,rev:bs.reduce((s,x)=>s+x.total,0)};
+  });
+  const maxRev=Math.max(...bStats.map(b=>b.rev),1);
+  document.getElementById('dash-barbers').innerHTML=bStats.map(b=>`
+    <div style="display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:0.5px solid var(--border)">
+      <div class="avatar" style="background:${b.color};color:${b.tc}">${initials(b.name)}</div>
+      <div style="flex:1"><div style="font-size:12px;font-weight:600">${b.name}</div>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:2px">
+          <div class="prog"><div class="prog-fill" style="width:${Math.round(b.rev/maxRev*100)}%"></div></div>
+          <span style="font-size:11px;color:var(--text2)">${cur(b.rev)}</span>
+        </div>
+      </div>
+      <div style="text-align:right;font-size:11px;color:var(--text2)">${b.cuts} cortes<br>${b.pend} pend.</div>
+    </div>`).join('');
+  document.getElementById('dash-sales').innerHTML=ts.reverse().slice(0,4).map(s=>`
+    <div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:0.5px solid var(--border)">
+      <div class="avatar" style="background:${bColor(s.barber)};color:${bTC(s.barber)}">${initials(s.barber)}</div>
+      <div style="flex:1;font-size:12px">
+        <span style="font-weight:600">${s.client||s.barber}</span>
+        <span style="color:var(--text2)"> · ${s.services.map(x=>x.svc).join(', ')}</span>
+        ${s.products.length?`<span style="color:var(--text2)"> + ${s.products.map(p=>p.qty+'× '+p.name).join(', ')}</span>`:''}
+      </div>
+      <span style="font-size:13px;font-weight:600;color:var(--green)">${cur(s.total)}</span>
+    </div>`).join('')||'<div class="empty">Sin ventas hoy</div>';
+}
+
+// ===== NEGOCIO: NOMBRE Y LOGO =====
+function getBizName(){return localStorage.getItem('biz_name')||'Mi Barbería'}
+function getBizLogo(){return localStorage.getItem('biz_logo')||''}
+
+function applyBranding(){
+  const name=getBizName();
+  const logo=getBizLogo();
+  // Todos los elementos de nombre
+  ['login-title','app-biz-name','sess-biz-name'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=name;
+  });
+  // Logo en login, top-bar y config preview
+  const logoEls=[
+    {wrap:'login-logo',inner:'login-logo-inner'},
+    {wrap:'app-logo',inner:'app-logo-inner'},
+    {wrap:'cfg-logo-preview',inner:'cfg-logo-inner'}
+  ];
+  logoEls.forEach(({wrap,inner})=>{
+    const w=document.getElementById(wrap);
+    const i=document.getElementById(inner);
+    if(!w||!i)return;
+    if(logo){
+      w.style.background='transparent';
+      i.innerHTML=`<img src="${logo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    } else {
+      w.style.background='#2C2C2A';
+      i.innerHTML='✂';
+    }
+  });
+  // Campo de texto en config
+  const cfgInput=document.getElementById('cfg-biz-name');
+  if(cfgInput)cfgInput.value=name;
+  // Title de la pestaña
+  document.title=name;
+}
+
+function previewBizName(val){
+  ['app-biz-name','sess-biz-name','login-title'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent=val||'Mi Barbería';
+  });
+  document.title=val||'Mi Barbería';
+}
+
+function saveBizName(){
+  const val=document.getElementById('cfg-biz-name').value.trim();
+  if(!val){alert('Escribe un nombre');return}
+  localStorage.setItem('biz_name',val);
+  applyBranding();
+  alert('Nombre guardado: '+val);
+}
+
+function handleLogoUpload(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>2*1024*1024){alert('El logo debe pesar menos de 2MB');return}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    localStorage.setItem('biz_logo',e.target.result);
+    applyBranding();
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeLogo(){
+  localStorage.removeItem('biz_logo');
+  applyBranding();
+}
+
+// ===== CONFIGURACIÓN =====
+function renderConfig(){
+  applyBranding();
+  syncArrays();
+  // Barberos
+  document.getElementById('cfg-barbers').innerHTML=db.barbers.map(b=>`
+    <div class="prod-line" style="gap:8px">
+      <div class="avatar" style="background:${b.color};color:${b.tc};flex-shrink:0">${initials(b.name)}</div>
+      <input value="${b.name}" onchange="updateBarberName(${b.id},this.value)" style="flex:1;font-size:13px;padding:5px 8px">
+      <input type="password" value="${b.pin}" maxlength="4" inputmode="numeric" placeholder="PIN barbero" onchange="updateBarberPin(${b.id},this.value)" style="width:110px;font-size:13px;padding:5px 8px">
+      <button class="btn btn-red" onclick="deleteBarber(${b.id})">✕</button>
+    </div>`).join('');
+  // Servicios
+  document.getElementById('cfg-services').innerHTML=db.services.map(s=>`
+    <div class="prod-line" style="gap:8px">
+      <input value="${s.name}" onchange="updateSvcName(${s.id},this.value)" style="flex:1;font-size:13px;padding:5px 8px">
+      <input type="number" value="${s.price}" onchange="updateSvcPrice(${s.id},this.value)" style="width:80px;font-size:13px;padding:5px 8px">
+      <button class="btn btn-red" onclick="deleteSvc(${s.id})">✕</button>
+    </div>`).join('');
+}
+function updateBarberName(id,name){
+  const b=db.barbers.find(x=>x.id===id);if(b&&name.trim())b.name=name.trim();
+  saveDB();syncArrays();populateSelects();
+}
+function updateBarberPin(id,pin){
+  const b=db.barbers.find(x=>x.id===id);
+  if(!pin){if(b)b.pin='';saveDB();return;}
+  if(!/^\d{4}$/.test(pin)){alert('El PIN del barbero debe ser 4 dígitos');return}
+  if(pin===getPin()){alert('Ese PIN ya es el del dueño, usa uno diferente');return}
+  if(db.barbers.filter(x=>x.id!==id).some(x=>x.pin===pin)){alert('Ese PIN ya lo usa otro barbero');return}
+  if(b)b.pin=pin;saveDB();
+}
+function deleteBarber(id){
+  if(!confirm('¿Eliminar este barbero?'))return;
+  db.barbers=db.barbers.filter(x=>x.id!==id);
+  saveDB();syncArrays();populateSelects();renderConfig();
+}
+function addBarber(){
+  const name=document.getElementById('cfg-new-barber').value.trim();
+  if(!name){alert('Escribe un nombre');return}
+  const ci=db.barbers.length%COLORS.length;
+  db.barbers.push({id:db.nextBarberId++,name,color:COLORS[ci].color,tc:COLORS[ci].tc,pin:''});
+  document.getElementById('cfg-new-barber').value='';
+  saveDB();syncArrays();populateSelects();renderConfig();
+}
+function updateSvcName(id,name){const s=db.services.find(x=>x.id===id);if(s&&name.trim())s.name=name.trim();saveDB();syncArrays();}
+function updateSvcPrice(id,price){const s=db.services.find(x=>x.id===id);if(s&&price>0)s.price=Number(price);saveDB();syncArrays();}
+function deleteSvc(id){
+  if(!confirm('¿Eliminar este servicio?'))return;
+  db.services=db.services.filter(x=>x.id!==id);
+  saveDB();syncArrays();populateSelects();renderConfig();
+}
+function addService(){
+  const name=document.getElementById('cfg-new-svc-name').value.trim();
+  const price=Number(document.getElementById('cfg-new-svc-price').value);
+  if(!name||!price){alert('Escribe nombre y precio');return}
+  db.services.push({id:db.nextSvcId++,name,price});
+  document.getElementById('cfg-new-svc-name').value='';
+  document.getElementById('cfg-new-svc-price').value='';
+  saveDB();syncArrays();populateSelects();renderConfig();
+}
+
+// ===== MODO BARBERO =====
+let bCoSvc=[],bCoProd=[];
+function renderBarberCobro(){
+  if(!coSvc.length)bCoSvc=[{svc:SERVICES[0]?.name||'',price:SERVICES[0]?.price||0}];
+  bCoProd=[];
+  renderBSvcLines();renderBProdLines();updateBTotals();
+}
+function renderBSvcLines(){
+  document.getElementById('b-svc-lines').innerHTML=bCoSvc.map((l,i)=>`
+    <div class="prod-line">
+      <select onchange="bSvcCh(${i},this.value)" style="flex:1;font-size:12px;padding:4px 6px">
+        ${SERVICES.map(s=>`<option value="${s.name}|${s.price}" ${l.svc===s.name?'selected':''}>${s.name} — ${cur(s.price)}</option>`).join('')}
+      </select>
+      <span style="font-size:12px;font-weight:600;min-width:48px;text-align:right">${cur(l.price)}</span>
+      <div class="qty-btn" onclick="bRmSvc(${i})">−</div>
+    </div>`).join('');
+}
+function bSvcCh(i,v){const[svc,price]=v.split('|');bCoSvc[i]={svc,price:Number(price)};renderBSvcLines();updateBTotals()}
+function bAddSvc(){bCoSvc.push({svc:SERVICES[0]?.name||'',price:SERVICES[0]?.price||0});renderBSvcLines();updateBTotals()}
+function bRmSvc(i){if(bCoSvc.length>1)bCoSvc.splice(i,1);renderBSvcLines();updateBTotals()}
+function renderBProdLines(){
+  document.getElementById('b-prod-lines').innerHTML=bCoProd.length?bCoProd.map((l,i)=>`
+    <div class="prod-line">
+      <select onchange="bProdCh(${i},this.value)" style="flex:1;font-size:12px;padding:4px 6px">
+        ${db.products.map(p=>`<option value="${p.id}" ${l.pid===p.id?'selected':''}>${p.name} — ${cur(p.price)}</option>`).join('')}
+      </select>
+      <div class="qty-btn" onclick="bProdQ(${i},-1)">−</div>
+      <span style="font-size:12px;min-width:18px;text-align:center">${l.qty}</span>
+      <div class="qty-btn" onclick="bProdQ(${i},1)">+</div>
+      <span style="font-size:12px;font-weight:600;min-width:48px;text-align:right">${cur(l.price*l.qty)}</span>
+      <button class="btn btn-red" onclick="bRmProd(${i})">✕</button>
+    </div>`).join(''):'<div style="font-size:12px;color:var(--text2);padding:6px 0">Sin productos</div>';
+}
+function bProdCh(i,pid){const p=db.products.find(x=>x.id===Number(pid));if(p){bCoProd[i]={pid:p.id,name:p.name,price:p.price,qty:bCoProd[i].qty};renderBProdLines();updateBTotals()}}
+function bProdQ(i,d){bCoProd[i].qty=Math.max(1,bCoProd[i].qty+d);renderBProdLines();updateBTotals()}
+function bAddProd(){if(!db.products.length){alert('Sin productos en inventario');return}const p=db.products[0];bCoProd.push({pid:p.id,name:p.name,price:p.price,qty:1});renderBProdLines();updateBTotals()}
+function bRmProd(i){bCoProd.splice(i,1);renderBProdLines();updateBTotals()}
+function updateBTotals(){
+  const st=bCoSvc.reduce((s,l)=>s+l.price,0);
+  const pt=bCoProd.reduce((s,l)=>s+l.price*l.qty,0);
+  document.getElementById('b-svc-t').textContent=cur(st);
+  document.getElementById('b-prod-t').textContent=cur(pt);
+  document.getElementById('b-total').textContent=cur(st+pt);
+}
+function bCompleteSale(){
+  const method=document.getElementById('b-method').value;
+  const client=document.getElementById('b-client').value.trim();
+  const st=bCoSvc.reduce((s,l)=>s+l.price,0);
+  const pt=bCoProd.reduce((s,l)=>s+l.price*l.qty,0);
+  if(!st&&!pt){alert('Agrega al menos un servicio');return}
+  const sale={id:Date.now(),date:today(),time:new Date().toTimeString().slice(0,5),barber:currentBarber.name,method,services:[...bCoSvc],products:[...bCoProd],svcTotal:st,prodTotal:pt,total:st+pt,client};
+  bCoProd.forEach(l=>{const p=db.products.find(x=>x.id===l.pid);if(p)p.stock=Math.max(0,p.stock-l.qty);});
+  db.sales.push(sale);
+  bCoSvc=[{svc:SERVICES[0]?.name||'',price:SERVICES[0]?.price||0}];bCoProd=[];
+  document.getElementById('b-client').value='';
+  renderBSvcLines();renderBProdLines();updateBTotals();
+  renderBSalesHistory();saveDB();
+  alert('Venta registrada: '+cur(sale.total));
+}
+function renderBSalesHistory(){
+  const el=document.getElementById('b-sales-history');if(!el)return;
+  const mine=db.sales.filter(s=>s.date===today()&&s.barber===currentBarber?.name).reverse();
+  const total=mine.reduce((s,x)=>s+x.total,0);
+  document.getElementById('b-day-total').textContent=cur(total);
+  document.getElementById('b-day-count').textContent=mine.length+' cobros';
+  el.innerHTML=mine.length?mine.map(s=>`
+    <div class="row-item" style="flex-direction:column;align-items:stretch;gap:3px">
+      <div style="display:flex;justify-content:space-between">
+        <div style="font-size:12px;font-weight:600">${s.client||'—'} <span style="font-weight:400;color:var(--text2)">· ${s.time} · ${s.method}</span></div>
+        <span style="font-weight:600;color:var(--green)">${cur(s.total)}</span>
+      </div>
+      <div style="font-size:11px;color:var(--text2)">
+        ${s.services.map(sv=>`<span class="tag-cat tc-s" style="margin-right:3px">${sv.svc}</span>`).join('')}
+        ${s.products.map(p=>`<span class="tag-cat tc-p" style="margin-right:3px">${p.qty}× ${p.name}</span>`).join('')}
+      </div>
+    </div>`).join(''):'<div class="empty">Sin ventas hoy</div>';
+}
+
+// ===== PERSISTENCIA =====
+function saveDB(){
+  try{localStorage.setItem('barberia_db',JSON.stringify({appointments:db.appointments,sales:db.sales,clients:db.clients,products:db.products,campaigns:db.campaigns,triggers:db.triggers,nextProdId:db.nextProdId,barbers:db.barbers,services:db.services,nextBarberId:db.nextBarberId,nextSvcId:db.nextSvcId}));}catch(e){}
+}
+function loadDB(){
+  try{
+    const raw=localStorage.getItem('barberia_db');
+    if(!raw)return;
+    const d=JSON.parse(raw);
+    if(d.appointments)db.appointments=d.appointments;
+    if(d.sales)db.sales=d.sales;
+    if(d.clients)db.clients=d.clients;
+    if(d.products)db.products=d.products;
+    if(d.campaigns)db.campaigns=d.campaigns;
+    if(d.triggers)db.triggers=d.triggers;
+    if(d.nextProdId)db.nextProdId=d.nextProdId;
+    if(d.barbers)db.barbers=d.barbers;
+    if(d.services)db.services=d.services;
+    if(d.nextBarberId)db.nextBarberId=d.nextBarberId;
+    if(d.nextSvcId)db.nextSvcId=d.nextSvcId;
+  }catch(e){}
+}
+
+// ===== INIT =====
+loadDB();
+syncArrays();
+applyBranding();
+document.getElementById('a-date')&&(document.getElementById('a-date').value=today());
+document.getElementById('ag-df')&&(document.getElementById('ag-df').value=today());
+
+const session=getSession();
+if(session.on&&session.exp>Date.now()){
+  if(session.role==='barber'){
+    currentBarber=db.barbers.find(b=>b.id===session.barberId)||null;
+    if(currentBarber)showBarberApp();
+    else showLogin();
+  } else {
+    currentBarber=null;showApp();
+  }
+} else {
+  showLogin();
+  if(!localStorage.getItem('bp')){showChangePin();document.getElementById('login-sub').textContent='Primera vez — crea tu PIN';}
+}
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>
